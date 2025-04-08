@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     // 获取所有格子
     const cells = document.querySelectorAll('.cell');
     const resetButton = document.getElementById('reset-button');
@@ -104,6 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 更新格子内容
     function updateGrid(grid) {
+        if (!cells || cells.length === 0) {
+            console.error('未找到格子元素');
+            return;
+        }
+        
         cells.forEach(cell => {
             const row = parseInt(cell.getAttribute('data-row'));
             const col = parseInt(cell.getAttribute('data-col'));
@@ -131,12 +136,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function updatePlayerCollection(playerPrefix, collection) {
         // 更新收集区
         const collectionContainer = document.getElementById(`${playerPrefix}-gems`);
+        if (!collectionContainer) {
+            console.error(`未找到 ${playerPrefix}-gems 元素`);
+            return;
+        }
+        
         collectionContainer.innerHTML = '';
         
         // 创建宝石计数对象
         const gemCounts = {
             'A': 0, 'B': 0, 'C': 0, 'D': 0, 'E': 0, 'α': 0, 'β': 0
         };
+        
+        // 检查 collection 是否存在且是数组
+        if (!Array.isArray(collection)) {
+            console.error(`${playerPrefix} 的收集区数据无效`);
+            return;
+        }
         
         // 添加收集的宝石
         collection.forEach(gem => {
