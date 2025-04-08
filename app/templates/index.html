@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Splendor Duel</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        
+        <div class="game-container">
+            <div class="grid-container">
+                <div class="grid">
+                    {% for row_index in range(grid|length) %}
+                        <div class="row">
+                            {% for col_index in range(grid[row_index]|length) %}
+                                {% set cell = grid[row_index][col_index] %}
+                                <div class="cell {% if not cell.token %}empty{% endif %}" 
+                                     data-row="{{ row_index }}" 
+                                     data-col="{{ col_index }}">
+                                    {% if cell.token %}
+                                        <div class="token"></div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="collection-area">
+                <h2>收集区域</h2>
+                <div class="collected-tokens">
+                    {% for token_id in collection_area %}
+                        <div class="token collected" data-id="{{ token_id }}"></div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="reset-button">重置</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', path='/js/game.js') }}"></script>
+</body>
+</html> 
