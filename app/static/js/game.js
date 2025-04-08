@@ -88,25 +88,57 @@ document.addEventListener('DOMContentLoaded', () => {
             cell.innerHTML = '';
             
             // 更新格子样式和内容
-            if (cellData.token) {
+            if (cellData.has_gem && cellData.gem) {
                 cell.classList.remove('empty');
-                const tokenElement = document.createElement('div');
-                tokenElement.className = 'token';
-                cell.appendChild(tokenElement);
+                const gemElement = document.createElement('div');
+                gemElement.className = `gem type-${cellData.gem.type}`;
+                gemElement.textContent = cellData.gem.type;
+                cell.appendChild(gemElement);
             } else {
                 cell.classList.add('empty');
             }
         });
         
         // 更新收集区
-        const collectionContainer = document.querySelector('.collected-tokens');
+        const collectionContainer = document.querySelector('.collected-gems');
         collectionContainer.innerHTML = '';
         
-        collection_area.forEach(tokenId => {
-            const tokenElement = document.createElement('div');
-            tokenElement.className = 'token collected';
-            tokenElement.setAttribute('data-id', tokenId);
-            collectionContainer.appendChild(tokenElement);
+        // 创建宝石计数对象
+        const gemCounts = {
+            'A': 0, 'B': 0, 'C': 0, 'D': 0, 'E': 0, 'α': 0, 'β': 0
+        };
+        
+        // 添加收集的宝石
+        collection_area.forEach(gem => {
+            const gemElement = document.createElement('div');
+            gemElement.className = `gem type-${gem.type}`;
+            gemElement.setAttribute('data-id', gem.id);
+            gemElement.textContent = gem.type;
+            collectionContainer.appendChild(gemElement);
+            
+            // 增加宝石计数
+            gemCounts[gem.type]++;
         });
+        
+        // 更新宝石统计
+        const gemCountList = document.querySelector('.gem-count-list');
+        if (gemCountList) {
+            gemCountList.innerHTML = '';
+            
+            for (const [type, count] of Object.entries(gemCounts)) {
+                const countItem = document.createElement('div');
+                countItem.className = 'gem-count-item';
+                
+                const colorDiv = document.createElement('div');
+                colorDiv.className = `gem-count-color ${type}`;
+                
+                const countSpan = document.createElement('span');
+                countSpan.textContent = `${type}: ${count}`;
+                
+                countItem.appendChild(colorDiv);
+                countItem.appendChild(countSpan);
+                gemCountList.appendChild(countItem);
+            }
+        }
     }
 }); 

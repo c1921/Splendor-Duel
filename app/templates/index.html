@@ -16,11 +16,13 @@
                         <div class="row">
                             {% for col_index in range(grid[row_index]|length) %}
                                 {% set cell = grid[row_index][col_index] %}
-                                <div class="cell {% if not cell.token %}empty{% endif %}" 
+                                <div class="cell {% if not cell.has_gem %}empty{% endif %}" 
                                      data-row="{{ row_index }}" 
                                      data-col="{{ col_index }}">
-                                    {% if cell.token %}
-                                        <div class="token"></div>
+                                    {% if cell.has_gem and cell.gem %}
+                                        <div class="gem type-{{ cell.gem.type }}">
+                                            {{ cell.gem.type }}
+                                        </div>
                                     {% endif %}
                                 </div>
                             {% endfor %}
@@ -31,10 +33,30 @@
             
             <div class="collection-area">
                 <h2>收集区域</h2>
-                <div class="collected-tokens">
-                    {% for token_id in collection_area %}
-                        <div class="token collected" data-id="{{ token_id }}"></div>
+                <div class="collected-gems">
+                    {% for gem in collection_area %}
+                        <div class="gem type-{{ gem.type }}" data-id="{{ gem.id }}">
+                            {{ gem.type }}
+                        </div>
                     {% endfor %}
+                </div>
+                
+                <div class="gem-count">
+                    <div class="gem-count-title">宝石统计</div>
+                    <div class="gem-count-list">
+                        {% set gem_types = {'A': 0, 'B': 0, 'C': 0, 'D': 0, 'E': 0, 'α': 0, 'β': 0} %}
+                        
+                        {% for gem in collection_area %}
+                            {% set _ = gem_types.update({gem.type: gem_types[gem.type] + 1}) %}
+                        {% endfor %}
+                        
+                        {% for type, count in gem_types.items() %}
+                            <div class="gem-count-item">
+                                <div class="gem-count-color {{ type }}"></div>
+                                <span>{{ type }}: {{ count }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

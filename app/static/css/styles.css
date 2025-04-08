@@ -4,6 +4,17 @@
      box-sizing: border-box;
  }
 
+ :root {
+     /* 宝石颜色定义 */
+     --gem-A-color: #e09999; /* 红色 */
+     --gem-B-color: #99e099; /* 绿色 */
+     --gem-C-color: #99bae0; /* 蓝色 */
+     --gem-D-color: #414141; /* 黑色 */
+     --gem-E-color: #f5f5f5; /* 白色 */
+     --gem-alpha-color: #e0d399; /* 黄色 */
+     --gem-beta-color: #e099d3; /* 粉紫色 */
+ }
+
  body {
      font-family: 'Arial', sans-serif;
      background-color: #f5f5f5;
@@ -84,15 +95,56 @@
      background-color: #eaeded;
  }
 
- .token {
+ .gem {
      width: 40px;
      height: 40px;
-     background-color: #e74c3c;
      border-radius: 50%;
      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     font-weight: bold;
+     font-size: 16px;
  }
 
- .collected-tokens {
+ /* 宝石类型样式 */
+ .gem.type-A {
+     background-color: var(--gem-A-color);
+     color: white;
+ }
+
+ .gem.type-B {
+     background-color: var(--gem-B-color);
+     color: black;
+ }
+
+ .gem.type-C {
+     background-color: var(--gem-C-color);
+     color: white;
+ }
+
+ .gem.type-D {
+     background-color: var(--gem-D-color);
+     color: white;
+ }
+
+ .gem.type-E {
+     background-color: var(--gem-E-color);
+     color: black;
+     border: 1px solid #ddd;
+ }
+
+ .gem.type-α {
+     background-color: var(--gem-alpha-color);
+     color: black;
+ }
+
+ .gem.type-β {
+     background-color: var(--gem-beta-color);
+     color: white;
+ }
+
+ .collected-gems {
      display: flex;
      flex-wrap: wrap;
      gap: 10px;
@@ -100,10 +152,6 @@
      background-color: #f9f9f9;
      border-radius: 5px;
      min-height: 150px;
- }
-
- .token.collected {
-     background-color: #2ecc71;
  }
 
  .controls {
@@ -125,6 +173,50 @@
      background-color: #2980b9;
  }
 
+ .gem-count {
+     margin-top: 20px;
+     border-top: 1px solid #eee;
+     padding-top: 15px;
+ }
+
+ .gem-count-title {
+     font-weight: bold;
+     margin-bottom: 10px;
+ }
+
+ .gem-count-list {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 10px;
+ }
+
+ .gem-count-item {
+     display: flex;
+     align-items: center;
+     background: #f5f5f5;
+     padding: 5px 10px;
+     border-radius: 15px;
+ }
+
+ .gem-count-color {
+     width: 15px;
+     height: 15px;
+     border-radius: 50%;
+     margin-right: 5px;
+ }
+
+ /* 统计区域的颜色指示器 */
+ .gem-count-color.A { background-color: var(--gem-A-color); }
+ .gem-count-color.B { background-color: var(--gem-B-color); }
+ .gem-count-color.C { background-color: var(--gem-C-color); }
+ .gem-count-color.D { background-color: var(--gem-D-color); }
+ .gem-count-color.E { 
+     background-color: var(--gem-E-color); 
+     border: 1px solid #ddd; 
+ }
+ .gem-count-color.α { background-color: var(--gem-alpha-color); }
+ .gem-count-color.β { background-color: var(--gem-beta-color); }
+
  @media (max-width: 768px) {
      .game-container {
          flex-direction: column;
@@ -141,8 +233,9 @@
          height: 50px;
      }
 
-     .token {
+     .gem {
          width: 30px;
          height: 30px;
+         font-size: 14px;
      }
  }
