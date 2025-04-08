@@ -9,7 +9,45 @@
 <body>
     <div class="container">
         
+        <div class="player-info">
+            <div class="current-player {% if current_player == 'P1' %}active{% endif %}" id="player1-indicator">
+                P1
+            </div>
+            <div class="current-player {% if current_player == 'P2' %}active{% endif %}" id="player2-indicator">
+                P2
+            </div>
+        </div>
+        
         <div class="game-container">
+            <div class="player-area player1-area">
+                <h2>P1收集区</h2>
+                <div class="collected-gems" id="player1-gems">
+                    {% for gem in player1_collection %}
+                        <div class="gem type-{{ gem.type }}" data-id="{{ gem.id }}">
+                            {{ gem.type }}
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="gem-count">
+                    <div class="gem-count-title">宝石统计</div>
+                    <div class="gem-count-list" id="player1-counts">
+                        {% set gem_types = {'A': 0, 'B': 0, 'C': 0, 'D': 0, 'E': 0, 'α': 0, 'β': 0} %}
+                        
+                        {% for gem in player1_collection %}
+                            {% set _ = gem_types.update({gem.type: gem_types[gem.type] + 1}) %}
+                        {% endfor %}
+                        
+                        {% for type, count in gem_types.items() %}
+                            <div class="gem-count-item">
+                                <div class="gem-count-color {{ type }}"></div>
+                                <span>{{ type }}: {{ count }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
             <div class="grid-container">
                 <div class="grid">
                     {% for row_index in range(grid|length) %}
@@ -29,12 +67,16 @@
                         </div>
                     {% endfor %}
                 </div>
+                
+                <div class="controls">
+                    <button id="reset-button">重置</button>
+                </div>
             </div>
             
-            <div class="collection-area">
-                <h2>收集区域</h2>
-                <div class="collected-gems">
-                    {% for gem in collection_area %}
+            <div class="player-area player2-area">
+                <h2>P2收集区</h2>
+                <div class="collected-gems" id="player2-gems">
+                    {% for gem in player2_collection %}
                         <div class="gem type-{{ gem.type }}" data-id="{{ gem.id }}">
                             {{ gem.type }}
                         </div>
@@ -43,10 +85,10 @@
                 
                 <div class="gem-count">
                     <div class="gem-count-title">宝石统计</div>
-                    <div class="gem-count-list">
+                    <div class="gem-count-list" id="player2-counts">
                         {% set gem_types = {'A': 0, 'B': 0, 'C': 0, 'D': 0, 'E': 0, 'α': 0, 'β': 0} %}
                         
-                        {% for gem in collection_area %}
+                        {% for gem in player2_collection %}
                             {% set _ = gem_types.update({gem.type: gem_types[gem.type] + 1}) %}
                         {% endfor %}
                         
@@ -59,10 +101,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="controls">
-            <button id="reset-button">重置</button>
         </div>
     </div>
 

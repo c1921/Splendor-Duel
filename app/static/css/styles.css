@@ -13,6 +13,10 @@
      --gem-E-color: #f5f5f5; /* 白色 */
      --gem-alpha-color: #e0d399; /* 黄色 */
      --gem-beta-color: #e099d3; /* 粉紫色 */
+     
+     /* 玩家颜色 */
+     --player1-color: #e09999; /* 玩家1颜色 */
+     --player2-color: #99bae0; /* 玩家2颜色 */
  }
 
  body {
@@ -23,20 +27,53 @@
  }
 
  .container {
-     max-width: 900px;
+     max-width: 1200px;
      margin: 0 auto;
      padding: 20px;
  }
 
  h1 {
      text-align: center;
-     margin-bottom: 30px;
+     margin-bottom: 20px;
      color: #2c3e50;
  }
 
  h2 {
      margin-bottom: 15px;
      color: #3498db;
+     font-size: 1.2rem;
+ }
+
+ /* 玩家信息区域 */
+ .player-info {
+     display: flex;
+     justify-content: center;
+     margin-bottom: 20px;
+     gap: 30px;
+ }
+
+ .current-player {
+     padding: 10px 20px;
+     border-radius: 5px;
+     font-weight: bold;
+     border: 2px solid #ddd;
+     opacity: 0.7;
+     transition: all 0.3s ease;
+ }
+
+ .current-player.active {
+     opacity: 1;
+     transform: scale(1.05);
+ }
+
+ #player1-indicator {
+     background-color: var(--player1-color);
+     color: white;
+ }
+
+ #player2-indicator {
+     background-color: var(--player2-color);
+     color: white;
  }
 
  .game-container {
@@ -45,20 +82,35 @@
      margin-bottom: 30px;
  }
 
- .grid-container,
- .collection-area {
+ .grid-container, .player-area {
      background-color: white;
      border-radius: 8px;
-     padding: 20px;
+     padding: 15px;
      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
  }
 
  .grid-container {
-     width: 60%;
+     width: 40%;
  }
 
- .collection-area {
-     width: 35%;
+ .player-area {
+     width: 28%;
+     transition: all 0.3s ease;
+ }
+
+ .player1-area {
+     border-top: 4px solid var(--player1-color);
+ }
+
+ .player2-area {
+     border-top: 4px solid var(--player2-color);
+ }
+
+ .player-area h2 {
+     color: #333;
+     text-align: center;
+     padding-bottom: 10px;
+     border-bottom: 1px solid #eee;
  }
 
  .grid {
@@ -147,15 +199,22 @@
  .collected-gems {
      display: flex;
      flex-wrap: wrap;
-     gap: 10px;
-     padding: 15px;
+     gap: 8px;
+     padding: 10px;
      background-color: #f9f9f9;
      border-radius: 5px;
-     min-height: 150px;
+     min-height: 120px;
+ }
+
+ .player-area .collected-gems .gem {
+     width: 35px;
+     height: 35px;
+     font-size: 14px;
  }
 
  .controls {
      text-align: center;
+     margin-top: 15px;
  }
 
  button {
@@ -174,7 +233,7 @@
  }
 
  .gem-count {
-     margin-top: 20px;
+     margin-top: 15px;
      border-top: 1px solid #eee;
      padding-top: 15px;
  }
@@ -182,25 +241,27 @@
  .gem-count-title {
      font-weight: bold;
      margin-bottom: 10px;
+     font-size: 0.9rem;
  }
 
  .gem-count-list {
      display: flex;
      flex-wrap: wrap;
-     gap: 10px;
+     gap: 6px;
  }
 
  .gem-count-item {
      display: flex;
      align-items: center;
      background: #f5f5f5;
-     padding: 5px 10px;
+     padding: 4px 8px;
      border-radius: 15px;
+     font-size: 0.8rem;
  }
 
  .gem-count-color {
-     width: 15px;
-     height: 15px;
+     width: 12px;
+     height: 12px;
      border-radius: 50%;
      margin-right: 5px;
  }
@@ -217,15 +278,45 @@
  .gem-count-color.α { background-color: var(--gem-alpha-color); }
  .gem-count-color.β { background-color: var(--gem-beta-color); }
 
+ @media (max-width: 1024px) {
+     .game-container {
+         flex-wrap: wrap;
+     }
+
+     .grid-container {
+         width: 100%;
+         margin-bottom: 20px;
+         order: 1;
+     }
+     
+     .player1-area {
+         width: 48%;
+         order: 2;
+     }
+     
+     .player2-area {
+         width: 48%;
+         order: 3;
+     }
+ }
+
  @media (max-width: 768px) {
      .game-container {
          flex-direction: column;
      }
 
      .grid-container,
-     .collection-area {
+     .player-area {
          width: 100%;
          margin-bottom: 20px;
+     }
+     
+     .player1-area {
+         order: 2;
+     }
+     
+     .player2-area {
+         order: 3;
      }
 
      .cell {

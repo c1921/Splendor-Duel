@@ -37,6 +37,11 @@ GEM_COUNTS = {
     GemType.BETA: 2
 }
 
+# 玩家枚举
+class Player:
+    P1 = "P1"
+    P2 = "P2"
+
 # 宝石类
 class Gem:
     def __init__(self, gem_id: int, gem_type: str):
@@ -54,7 +59,18 @@ class GameState:
     def __init__(self):
         self.grid_size = 5
         self.grid = [[{"id": i * self.grid_size + j, "has_gem": True, "gem": None} for j in range(self.grid_size)] for i in range(self.grid_size)]
-        self.collection_area = []
+        # 为每个玩家创建独立的收集区域
+        self.players = {
+            Player.P1: {
+                "name": "玩家1",
+                "collection_area": []
+            },
+            Player.P2: {
+                "name": "玩家2",
+                "collection_area": []
+            }
+        }
+        self.current_player = Player.P1  # 当前回合玩家
         self.initialize_gems()
     
     def initialize_gems(self):
@@ -81,10 +97,23 @@ class GameState:
     def get_grid(self):
         return self.grid
     
-    def get_collection_area(self):
-        return self.collection_area
+    def get_player_collection(self, player):
+        return self.players[player]["collection_area"]
     
-    def move_token(self, row, col):
+    def get_all_collections(self):
+        return {
+            "P1": self.players[Player.P1]["collection_area"],
+            "P2": self.players[Player.P2]["collection_area"]
+        }
+    
+    def get_current_player(self):
+        return self.current_player
+    
+    def switch_player(self):
+        self.current_player = Player.P2 if self.current_player == Player.P1 else Player.P1
+        return self.current_player
+    
+    def move_gem(self, row, col):
         # 确保row和col是整数
         try:
             row = int(row)
@@ -97,10 +126,12 @@ class GameState:
             if cell["has_gem"] and cell["gem"]:
                 # 标记格子为空
                 cell["has_gem"] = False
-                # 添加到收集区
-                self.collection_area.append(cell["gem"])
+                # 添加到当前玩家的收集区
+                self.players[self.current_player]["collection_area"].append(cell["gem"])
                 # 清除格子中的宝石
                 cell["gem"] = None
+                # 切换玩家
+                self.switch_player()
                 return True
         return False
 
@@ -110,33 +141,43 @@ game_state = GameState()
 # 路由
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
+    collections = game_state.get_all_collections()
     return templates.TemplateResponse(
         "index.html", 
         {
             "request": request, 
             "grid": game_state.get_grid(),
-            "collection_area": game_state.get_collection_area()
+            "player1_collection": collections["P1"],
+            "player2_collection": collections["P2"],
+            "current_player": game_state.get_current_player()
         }
     )
 
-# API路由 - 获取格子状态
-@app.get("/api/grid")
-async def get_grid():
+# API路由 - 获取游戏状态
+@app.get("/api/game_state")
+async def get_game_state():
+    collections = game_state.get_all_collections()
     return {
         "grid": game_state.get_grid(),
-        "collection_area": game_state.get_collection_area()
+        "player1_collection": collections["P1"],
+        "player2_collection": collections["P2"],
+        "current_player": game_state.get_current_player()
     }
 
 # API路由 - 移动宝石
 @app.post("/api/move")
-async def move_token(row: str = Form(...), col: str = Form(...)):
-    success = game_state.move_token(row, col)
+async def move_gem(row: str = Form(...), col: str = Form(...)):
+    success = game_state.move_gem(row, col)
     if not success:
         raise HTTPException(status_code=400, detail="无效的移动")
+    
+    collections = game_state.get_all_collections()
     return {
         "success": True,
         "grid": game_state.get_grid(),
-        "collection_area": game_state.get_collection_area()
+        "player1_collection": collections["P1"],
+        "player2_collection": collections["P2"],
+        "current_player": game_state.get_current_player()
     }
 
 # 重置游戏
@@ -144,10 +185,14 @@ async def move_token(row: str = Form(...), col: str = Form(...)):
 async def reset_game():
     global game_state
     game_state = GameState()
+    
+    collections = game_state.get_all_collections()
     return {
         "success": True,
         "grid": game_state.get_grid(),
-        "collection_area": game_state.get_collection_area()
+        "player1_collection": collections["P1"],
+        "player2_collection": collections["P2"],
+        "current_player": game_state.get_current_player()
     }
 
 if __name__ == "__main__":

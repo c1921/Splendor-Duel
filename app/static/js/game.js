@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 获取所有格子
     const cells = document.querySelectorAll('.cell');
     const resetButton = document.getElementById('reset-button');
+    const player1Indicator = document.getElementById('player1-indicator');
+    const player2Indicator = document.getElementById('player2-indicator');
     
     // 为每个格子添加点击事件
     cells.forEach(cell => {
@@ -74,9 +76,34 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 更新UI函数
     function updateUI(data) {
-        const { grid, collection_area } = data;
+        const { grid, player1_collection, player2_collection, current_player } = data;
+        
+        // 更新当前玩家指示器
+        updatePlayerIndicator(current_player);
         
         // 更新格子
+        updateGrid(grid);
+        
+        // 更新玩家1收集区
+        updatePlayerCollection('player1', player1_collection);
+        
+        // 更新玩家2收集区
+        updatePlayerCollection('player2', player2_collection);
+    }
+    
+    // 更新当前玩家指示器
+    function updatePlayerIndicator(currentPlayer) {
+        if (currentPlayer === 'P1') {
+            player1Indicator.classList.add('active');
+            player2Indicator.classList.remove('active');
+        } else {
+            player1Indicator.classList.remove('active');
+            player2Indicator.classList.add('active');
+        }
+    }
+    
+    // 更新格子内容
+    function updateGrid(grid) {
         cells.forEach(cell => {
             const row = parseInt(cell.getAttribute('data-row'));
             const col = parseInt(cell.getAttribute('data-col'));
@@ -98,9 +125,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 cell.classList.add('empty');
             }
         });
-        
+    }
+    
+    // 更新玩家收集区
+    function updatePlayerCollection(playerPrefix, collection) {
         // 更新收集区
-        const collectionContainer = document.querySelector('.collected-gems');
+        const collectionContainer = document.getElementById(`${playerPrefix}-gems`);
         collectionContainer.innerHTML = '';
         
         // 创建宝石计数对象
@@ -109,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         
         // 添加收集的宝石
-        collection_area.forEach(gem => {
+        collection.forEach(gem => {
             const gemElement = document.createElement('div');
             gemElement.className = `gem type-${gem.type}`;
             gemElement.setAttribute('data-id', gem.id);
@@ -121,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         // 更新宝石统计
-        const gemCountList = document.querySelector('.gem-count-list');
+        const gemCountList = document.getElementById(`${playerPrefix}-counts`);
         if (gemCountList) {
             gemCountList.innerHTML = '';
             
